@@ -20,6 +20,7 @@ RATE = 44100
 RECORD_SECONDS = 5
 THRESHOLD = 160
 
+
 def stt(raw_audio_chunks, sample_size):
     with tempfile.TemporaryDirectory() as temp_dir:
         audio_file_path = Path(temp_dir).resolve() / 'audio.wav'
@@ -33,7 +34,7 @@ def stt(raw_audio_chunks, sample_size):
                 wf.writeframes(chunk)
 
         try:
-            audio_file= open(audio_file_path, "rb")
+            audio_file = open(audio_file_path, "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file)
             audio_file.close()
             os.remove(audio_file_path)
@@ -56,9 +57,9 @@ def main():
     stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True)
     sample_size = p.get_sample_size(FORMAT)
 
-    threading.Thread(target=transcribe_loop, args=(audio_queue, sample_size)).start()
+    threading.Thread(target=transcribe_loop, args=(
+        audio_queue, sample_size)).start()
 
-    audios = []
     recording = False
     stop_counter = 30
     chunks = []
@@ -83,5 +84,6 @@ def main():
 
     stream.close()
     p.terminate()
+
 
 main()
